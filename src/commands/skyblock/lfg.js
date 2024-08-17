@@ -1,10 +1,17 @@
-const { SlashCommandBuilder, EmbedBuilder,  ButtonBuilder, ButtonStyle, ButtonInteraction, ActionRowBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder,  ButtonBuilder, ButtonStyle, ActionRowBuilder, ThreadAutoArchiveDuration } = require('discord.js');
 
 module.exports = {
+    cooldown: 1,
     data: new SlashCommandBuilder()
         .setName("lfg")
-        .setDescription("Creates a Looking for Group Embed."),
+        .setDescription("Creates a Looking for Group Embed.")
+        .addStringOption((option) => option
+            .setName("note")
+            .setDescription("Add a custom message to your LFG Embed.")
+            .setRequired(false)),
     async execute(interaction) {
+        const note = interaction.options.getString('note');
+
         /* Buttons */
         const cata = new ButtonBuilder()
             .setCustomId('Catacombs')
@@ -27,7 +34,7 @@ module.exports = {
             .setLabel('Events')
             .setStyle(ButtonStyle.Primary)  
         
-        /* Catacombs & Master Mode Buttons*/
+        /* Catacombs & Master Mode Buttons */
 
         const normal = new ButtonBuilder()
             .setCustomId('normal')
@@ -67,7 +74,7 @@ module.exports = {
             .setLabel('Floor 7')
             .setStyle(ButtonStyle.Secondary)
 
-        /* Catacombs & Master Mode Buttons*/
+        /* Kuudra Buttons */
 
         const basic = new ButtonBuilder()    
             .setCustomId('basic')
@@ -92,8 +99,10 @@ module.exports = {
             
           
              
-        const row = new ActionRowBuilder()
+        const initRow = new ActionRowBuilder()
             .addComponents(cata, kuudra, mineshaft, fishing, events);
+        
+        // TODO: make the embeds prettier
             
         /* Embed */
         let init = new EmbedBuilder()
@@ -104,7 +113,13 @@ module.exports = {
                 { name: 'Catacombs', value: 'You will specify your floor afterwards.'}
             )
 
-        const firstResponse = await interaction.reply({embeds: [init], components: [row], ephemeral: true})
+        const cataInstructions = new EmbedBuilder()
+            .setColor(0x0099FF)
+            .setTitle("Cata LFG Instructions")
+            .setDescription(
+                "Send your ign, how many people you already have, and what roles you are looking for."
+            )
+        const firstResponse = await interaction.reply({embeds: [init], components: [initRow], ephemeral: false})
 
         const collectorFilter = i => i.user.id === interaction.user.id;
         try {
@@ -139,22 +154,343 @@ module.exports = {
                                     .setFields(
                                         { name: 'Normal Mode Floors', value: 'What floor are you looking for?'}
                                     )
-                                    
+                                
                                 await cataPhaseThree.update({ embeds: [init], components: [rowCata1, rowCata2], time: 60_000});
+                                
+                                const cataPhaseFourNormal = await firstResponse.awaitMessageComponent({ filter: collectorFilter, time: 60_000})
+                                
+                                switch (cataPhaseFourNormal.customId) {
+                                    case 'Floor1':
+                                        init
+                                            .setTitle('Floor 1')
+                                            .setImage()
+                                            .setThumbnail('https://wiki.hypixel.net/images/8/80/SkyBlock_items_catacombs_pass_4.png')
+                                            .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() })
+                                            .setFields()
+                                            .addFields(
+                                                { name: 'LFG Leader', value: interaction.user.username, inline: true },
+                                                { name: 'Note', value: note }
+                                            )
+                                            .setTimestamp()
+                                            .setFooter({ text: 'Created by woqh and Unreal5trength. '})
+                                            
+                                    
+                                        await cataPhaseFourNormal.update({ embeds: [init], components: []})
+                                        thread = await interaction.channel.threads.create({
+                                            name: `${interaction.user.username} Floor 1`,
+                                            autoArchiveDuration: ThreadAutoArchiveDuration.OneHour
+                                        })
 
+                                        await thread.send({ embeds: [init, cataInstructions] });
+                                        break;
+                                    case 'Floor2':
+                                        init
+                                            .setTitle('Floor 2')
+                                            .setImage()
+                                            .setThumbnail('https://wiki.hypixel.net/images/4/4b/SkyBlock_items_catacombs_pass_5.png')
+                                            .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() })
+                                            .setFields()
+                                            .addFields(
+                                                { name: 'LFG Leader', value: interaction.user.username, inline: true },
+                                                { name: 'Note', value: note }
+                                            )
+                                            .setTimestamp()
+                                            .setFooter({ text: 'Created by woqh and Unreal5trength. '})
+                                        
+                                        await cataPhaseFourNormal.update({ embeds: [init], components: []})
+                                        thread = await interaction.channel.threads.create({
+                                            name: `${interaction.user.username} Floor 2`,
+                                            autoArchiveDuration: ThreadAutoArchiveDuration.OneHour
+                                        })
+    
+                                        await thread.send({ embeds: [init, cataInstructions] });
+                                        break;
+                                    case 'Floor3':
+                                        init
+                                            .setTitle('Floor 3')
+                                            .setImage()
+                                            .setThumbnail('https://wiki.hypixel.net/images/6/69/SkyBlock_items_catacombs_pass_6.png')
+                                            .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() })
+                                            .setFields()
+                                            .addFields(
+                                                { name: 'LFG Leader', value: interaction.user.username, inline: true },
+                                                { name: 'Note', value: note }
+                                            )
+                                            .setTimestamp()
+                                            .setFooter({ text: 'Created by woqh and Unreal5trength. '})
+                                    
+                                        await cataPhaseFourNormal.update({ embeds: [init], components: []})
+                                        thread = await interaction.channel.threads.create({
+                                            name: `${interaction.user.username} Floor 3`,
+                                            autoArchiveDuration: ThreadAutoArchiveDuration.OneHour
+                                        })
+
+                                        await thread.send({ embeds: [init, cataInstructions] });
+                                        break;
+                                    case 'Floor4':
+                                        init
+                                            .setTitle('Floor 4')
+                                            .setImage()
+                                            .setThumbnail('https://wiki.hypixel.net/images/2/2f/SkyBlock_items_catacombs_pass_7.png')
+                                            .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() })
+                                            .setFields()
+                                            .addFields(
+                                                { name: 'LFG Leader', value: interaction.user.username, inline: true },
+                                                { name: 'Note', value: note }
+                                            )
+                                            .setTimestamp()
+                                            .setFooter({ text: 'Created by woqh and Unreal5trength. '})
+                                    
+                                        await cataPhaseFourNormal.update({ embeds: [init], components: []})
+                                        thread = await interaction.channel.threads.create({
+                                            name: `${interaction.user.username} Floor 4`,
+                                            autoArchiveDuration: ThreadAutoArchiveDuration.OneHour
+                                        })
+
+                                        await thread.send({ embeds: [init, cataInstructions] });
+                                        break;
+                                    case 'Floor5':
+                                        init
+                                            .setTitle('Floor 5')
+                                            .setImage()
+                                            .setThumbnail('https://wiki.hypixel.net/images/3/3a/SkyBlock_items_catacombs_pass_8.png')
+                                            .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() })
+                                            .setFields()
+                                            .addFields(
+                                                { name: 'LFG Leader', value: interaction.user.username, inline: true },
+                                                { name: 'Note', value: note }
+                                            )
+                                            .setTimestamp()
+                                            .setFooter({ text: 'Created by woqh and Unreal5trength. '})
+                                
+                                        await cataPhaseFourNormal.update({ embeds: [init], components: []})
+                                        thread = await interaction.channel.threads.create({
+                                            name: `${interaction.user.username} Floor 5`,
+                                            autoArchiveDuration: ThreadAutoArchiveDuration.OneHour
+                                        })
+
+                                        await thread.send({ embeds: [init, cataInstructions] });
+                                        break;
+                                    case 'Floor6':
+                                        init
+                                            .setTitle('Floor 6')
+                                            .setImage()
+                                            .setThumbnail('https://wiki.hypixel.net/images/e/e3/SkyBlock_items_catacombs_pass_9.png')
+                                            .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() })
+                                            .setFields()
+                                            .addFields(
+                                                { name: 'LFG Leader', value: interaction.user.username, inline: true },
+                                                { name: 'Note', value: note }
+                                            )
+                                            .setTimestamp()
+                                            .setFooter({ text: 'Created by woqh and Unreal5trength. '})
+                            
+                                        await cataPhaseFourNormal.update({ embeds: [init], components: []})
+                                        thread = await interaction.channel.threads.create({
+                                            name: `${interaction.user.username} Floor 6`,
+                                            autoArchiveDuration: ThreadAutoArchiveDuration.OneHour
+                                        })
+
+                                        await thread.send({ embeds: [init, cataInstructions] });
+                                        break;
+                                    case 'Floor7':
+                                        init
+                                            .setTitle('Floor 7')
+                                            .setImage()
+                                            .setThumbnail('https://wiki.hypixel.net/images/2/28/SkyBlock_items_catacombs_pass_10.png')
+                                            .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() })
+                                            .setFields()
+                                            .addFields(
+                                                { name: 'LFG Leader', value: interaction.user.username, inline: true },
+                                                { name: 'Note', value: note }
+                                            )
+                                            .setTimestamp()
+                                            .setFooter({ text: 'Created by woqh and Unreal5trength. '})
+                            
+                                        await cataPhaseFourNormal.update({ embeds: [init], components: []})
+                                        thread = await interaction.channel.threads.create({
+                                            name: `${interaction.user.username} Floor 7`,
+                                            autoArchiveDuration: ThreadAutoArchiveDuration.OneHour
+                                        })
+
+                                        await thread.send({ embeds: [init, cataInstructions] });
+                                        break;
+                                }
                             case 'master':
                                 init
-                                    .setTitle('Catacombs')
+                                    .setTitle('Master Mode Catacombs')
                                     .setImage('https://static.wikia.nocookie.net/hypixel-skyblock/images/4/4d/Higher_Master_Floors.png/revision/latest?cb=20210424083936')
                                     .setFields(
-                                        { name: 'Master Mode Floors', value: 'What floor are you looking for?' }
+                                        { name: 'Master Mode Floors', value: 'What floor are you looking for?'}
                                     )
 
                                 await cataPhaseThree.update({ embeds: [init], components: [rowCata1, rowCata2], time: 60_000});
-                        }
+                                const cataPhaseFourMaster = await firstResponse.awaitMessageComponent({ filter: collectorFilter, time: 60_000})
 
-                    break;
+                                switch (cataPhaseFourMaster.customId) {
+                                    case 'Floor1':
+                                        init
+                                            .setTitle('Master Mode Floor 1')
+                                            .setImage()
+                                            .setThumbnail('https://wiki.hypixel.net/images/e/ee/SkyBlock_items_master_catacombs_pass_4.png')
+                                            .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() })
+                                            .setFields()
+                                            .addFields(
+                                                { name: 'LFG Leader', value: interaction.user.username, inline: true },
+                                                { name: 'Note', value: note }
+                                            )
+                                            .setTimestamp()
+                                            .setFooter({ text: 'Created by woqh and Unreal5trength. '})
+                                            
+                                    
+                                        await cataPhaseFourMaster.update({ embeds: [init], components: []})
+                                        thread = await interaction.channel.threads.create({
+                                            name: `${interaction.user.username} Master Mode Floor 1`,
+                                            autoArchiveDuration: ThreadAutoArchiveDuration.OneHour
+                                        })
 
+                                        await thread.send({ embeds: [init, cataInstructions] });
+                                        break;
+                                    case 'Floor2':
+                                        init
+                                            .setTitle('Master Mode Floor 2')
+                                            .setImage()
+                                            .setThumbnail('https://wiki.hypixel.net/images/2/26/SkyBlock_items_master_catacombs_pass_5.png')
+                                            .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() })
+                                            .setFields()
+                                            .addFields(
+                                                { name: 'LFG Leader', value: interaction.user.username, inline: true },
+                                                { name: 'Note', value: note }
+                                            )
+                                            .setTimestamp()
+                                            .setFooter({ text: 'Created by woqh and Unreal5trength. '})
+                                            
+                                    
+                                        await cataPhaseFourMaster.update({ embeds: [init], components: []})
+                                        thread = await interaction.channel.threads.create({
+                                            name: `${interaction.user.username} Master Mode Floor 2`,
+                                            autoArchiveDuration: ThreadAutoArchiveDuration.OneHour
+                                        })
+
+                                        await thread.send({ embeds: [init, cataInstructions] });
+                                        break;
+                                    case 'Floor3':
+                                        init
+                                            .setTitle('Master Mode Floor 3')
+                                            .setImage()
+                                            .setThumbnail('https://static.wikia.nocookie.net/hypixel-skyblock/images/4/43/Lower_Master_Floors.png/revision/latest?cb=20210424083908')
+                                            .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() })
+                                            .setFields()
+                                            .addFields(
+                                                { name: 'LFG Leader', value: interaction.user.username, inline: true },
+                                                { name: 'Note', value: note }
+                                            )
+                                            .setTimestamp()
+                                            .setFooter({ text: 'Created by woqh and Unreal5trength. '})
+                                            
+                                    
+                                        await cataPhaseFourMaster.update({ embeds: [init], components: []})
+                                        thread = await interaction.channel.threads.create({
+                                            name: `${interaction.user.username} Master Mode Floor 3`,
+                                            autoArchiveDuration: ThreadAutoArchiveDuration.OneHour
+                                        })
+
+                                        await thread.send({ embeds: [init, cataInstructions] });
+                                        break;
+                                    case 'Floor4':
+                                        init
+                                            .setTitle('Master Mode Floor 4')
+                                            .setImage()
+                                            .setThumbnail('https://static.wikia.nocookie.net/hypixel-skyblock/images/4/4d/Higher_Master_Floors.png/revision/latest/scale-to-width-down/284?cb=20210424083936')
+                                            .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() })
+                                            .setFields()
+                                            .addFields(
+                                                { name: 'LFG Leader', value: interaction.user.username, inline: true },
+                                                { name: 'Note', value: note }
+                                            )
+                                            .setTimestamp()
+                                            .setFooter({ text: 'Created by woqh and Unreal5trength. '})
+                                            
+                                    
+                                        await cataPhaseFourMaster.update({ embeds: [init], components: []})
+                                        thread = await interaction.channel.threads.create({
+                                            name: `${interaction.user.username} Master Mode Floor 4`,
+                                            autoArchiveDuration: ThreadAutoArchiveDuration.OneHour
+                                        })
+
+                                        await thread.send({ embeds: [init, cataInstructions] });
+                                        break;
+                                    case 'Floor5':
+                                        init
+                                            .setTitle('Master Mode Floor 5')
+                                            .setImage()
+                                            .setThumbnail('https://static.wikia.nocookie.net/hypixel-skyblock/images/4/4d/Higher_Master_Floors.png/revision/latest/scale-to-width-down/300?cb=20210424083936')
+                                            .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() })
+                                            .setFields()
+                                            .addFields(
+                                                { name: 'LFG Leader', value: interaction.user.username, inline: true },
+                                                { name: 'Note', value: note }
+                                            )
+                                            .setTimestamp()
+                                            .setFooter({ text: 'Created by woqh and Unreal5trength. '})
+                                            
+                                    
+                                        await cataPhaseFourMaster.update({ embeds: [init], components: []})
+                                        thread = await interaction.channel.threads.create({
+                                            name: `${interaction.user.username} Master Mode Floor 5`,
+                                            autoArchiveDuration: ThreadAutoArchiveDuration.OneHour
+                                        })
+
+                                        await thread.send({ embeds: [init, cataInstructions] });
+                                        break;
+                                    case 'Floor6':
+                                        init
+                                            .setTitle('Master Mode Floor 6')
+                                            .setImage()
+                                            .setThumbnail('https://static.wikia.nocookie.net/hypixel-skyblock/images/4/4d/Higher_Master_Floors.png/revision/latest/scale-to-width-down/300?cb=20210424083936')
+                                            .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() })
+                                            .setFields()
+                                            .addFields(
+                                                { name: 'LFG Leader', value: interaction.user.username, inline: true },
+                                                { name: 'Note', value: note }
+                                            )
+                                            .setTimestamp()
+                                            .setFooter({ text: 'Created by woqh and Unreal5trength. '})
+                                            
+                                    
+                                        await cataPhaseFourMaster.update({ embeds: [init], components: []})
+                                        thread = await interaction.channel.threads.create({
+                                            name: `${interaction.user.username} Master Mode Floor 6`,
+                                            autoArchiveDuration: ThreadAutoArchiveDuration.OneHour
+                                        })
+
+                                        await thread.send({ embeds: [init, cataInstructions] });
+                                        break;
+                                    case 'Floor7':
+                                        init
+                                            .setTitle('Master Mode Floor 7')
+                                            .setImage()
+                                            .setThumbnail('https://static.wikia.nocookie.net/hypixel-skyblock/images/4/4d/Higher_Master_Floors.png/revision/latest?cb=20210424083936')
+                                            .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() })
+                                            .setFields()
+                                            .addFields(
+                                                { name: 'LFG Leader', value: interaction.user.username, inline: true },
+                                                { name: 'Note', value: note }
+                                            )
+                                            .setTimestamp()
+                                            .setFooter({ text: 'Created by woqh and Unreal5trength. '})
+                                            
+                                    
+                                        await cataPhaseFourMaster.update({ embeds: [init], components: []})
+                                        thread = await interaction.channel.threads.create({
+                                            name: `${interaction.user.username} Master Mode Floor 7`,
+                                            autoArchiveDuration: ThreadAutoArchiveDuration.OneHour
+                                        })
+
+                                        await thread.send({ embeds: [init, cataInstructions] });
+                                        break;
+                                }
+                            break;
                 case 'Kuudra':
                     init
                         .setColor(0x0099FF)
@@ -180,7 +516,8 @@ module.exports = {
                 case 'Events':
                     await phaseTwo.update({ content: 'test'})
                     break;
-            }
+                }
+            } 
         } catch (e) {
             console.error(e)
         }
