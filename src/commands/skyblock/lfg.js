@@ -74,6 +74,7 @@ module.exports = {
             .setStyle(ButtonStyle.Secondary)
 
         /* Kuudra Buttons */
+
         const basic = new ButtonBuilder()    
             .setCustomId('basic')
             .setLabel('Basic')
@@ -94,8 +95,18 @@ module.exports = {
             .setCustomId('infernal')
             .setLabel('Infernal')
             .setStyle(ButtonStyle.Secondary)
+
+        /* Kuudra Buttons */
             
-          
+        const allMineshafts = new ButtonBuilder()
+        .setCustomId('allMineshafts')
+        .setLabel('All Mineshafts')
+        .setStyle(ButtonStyle.Secondary)
+        const vanguardMineshafts = new ButtonBuilder()
+        .setCustomId('vanguardMineshafts')
+        .setLabel('Vanguard Corpses')
+        .setStyle(ButtonStyle.Secondary)
+        
              
         const initRow = new ActionRowBuilder()
             .addComponents(cata, kuudra, mineshaft, fishing, events);
@@ -115,14 +126,21 @@ module.exports = {
             .setColor(0x0099FF)
             .setTitle("Cata LFG Instructions")
             .setDescription(
-                "Send your ign, how many people you already have, what roles you are looking for, and other necessary information."
+                "Send your ign, how many people you already have, what roles you are looking for, and other necessary information (Max 5 People)."
             )
         const kuudraInstructions = new EmbedBuilder()
             .setColor(0x0099FF)
             .setTitle("Kuudra LFG Instructions")
             .setDescription(
-                "Send your ign, how many people you already have, and other necessary information."
+                "Send your ign, how many people you already have, and other necessary information (Max 4 People)."
             )
+        const mineshaftInstructions = new EmbedBuilder()
+        .setColor(0x0099FF)
+            .setTitle("Mineshaft LFG Instructions")
+            .setDescription(
+                "Send your ign, how many people you already have, and how many you can take with you in the mineshaft (Max 4 People)."
+            )
+
         const firstResponse = await interaction.reply({embeds: [init], components: [initRow], ephemeral: false})
 
         const collectorFilter = i => i.user.id === interaction.user.id;
@@ -624,7 +642,66 @@ module.exports = {
                             break;
                     }
                 case 'Mineshaft':
-                    await phaseTwo.update({ content: 'test'})
+                    init
+                        .setTitle('Shafting Time')
+                        .setImage('https://wiki.hypixel.net/images/b/bc/Minecraft_items_packed_ice.png')
+                        .setFields(
+                            { name: 'Corpse Choice:', value: 'Are you grinding out any mineshafts, or vanguard corpses?'}
+                        )
+
+                        const rowMineshafts = new ActionRowBuilder()
+                        .setComponents(allMineshafts, vanguardMineshafts)
+                        
+                    await phaseTwo.update({ embeds: [init], components: [rowMineshafts], time: 60_000})
+
+                    const mineshaftPhaseThree = await firstResponse.awaitMessageComponent({ filter: collectorFilter, time: 60_000 })
+
+                    switch (mineshaftPhaseThree.customId) {
+                        case 'allMineshafts':
+                            init
+                                .setTitle('All Mineshafts')
+                                .setImage()
+                                .setThumbnail('https://static.wikia.nocookie.net/hypixel-skyblock/images/8/87/Enchanted_Prismarine_Shard.png/revision/latest?cb=20210609200828')
+                                .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() })
+                                .setFields()
+                                .addFields(
+                                    { name: 'LFG Leader', value: interaction.user.username, inline: true },
+                                    { name: 'Note', value: note }
+                                )
+                                .setTimestamp()
+                                .setFooter({ text: 'Created by woqh and Unreal5trength. '})
+                                            
+                            await mineshaftPhaseThree.update({ embeds: [init], components: []})
+                            thread = await interaction.channel.threads.create({
+                                name: `${interaction.user.username} Any Mineshafts`,
+                                autoArchiveDuration: ThreadAutoArchiveDuration.OneHour
+                            })
+
+                            await thread.send({ embeds: [init, mineshaftInstructions] });
+                            break;
+                        case 'vanguardMineshafts':
+                            init
+                                .setTitle('Vanguard Corpses')
+                                .setImage()
+                                .setThumbnail('https://wiki.hypixel.net/images/c/c5/SkyBlock_entities_corpse_vanguard.png')
+                                .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() })
+                                .setFields()
+                                .addFields(
+                                    { name: 'LFG Leader', value: interaction.user.username, inline: true },
+                                    { name: 'Note', value: note }
+                                )
+                                .setTimestamp()
+                                .setFooter({ text: 'Created by woqh and Unreal5trength. '})
+                                            
+                            await mineshaftPhaseThree.update({ embeds: [init], components: []})
+                            thread = await interaction.channel.threads.create({
+                                name: `${interaction.user.username} Vanguard Mineshafts`,
+                                autoArchiveDuration: ThreadAutoArchiveDuration.OneHour
+                            })
+
+                            await thread.send({ embeds: [init, mineshaftInstructions] });
+                            break;
+                    }
                     break;
                 case 'Fishing':
                     await phaseTwo.update({ content: 'test'})
