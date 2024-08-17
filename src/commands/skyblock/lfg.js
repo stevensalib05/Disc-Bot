@@ -35,7 +35,6 @@ module.exports = {
             .setStyle(ButtonStyle.Primary)  
         
         /* Catacombs & Master Mode Buttons */
-
         const normal = new ButtonBuilder()
             .setCustomId('normal')
             .setLabel('Normal Mode')
@@ -75,7 +74,6 @@ module.exports = {
             .setStyle(ButtonStyle.Secondary)
 
         /* Kuudra Buttons */
-
         const basic = new ButtonBuilder()    
             .setCustomId('basic')
             .setLabel('Basic')
@@ -117,7 +115,13 @@ module.exports = {
             .setColor(0x0099FF)
             .setTitle("Cata LFG Instructions")
             .setDescription(
-                "Send your ign, how many people you already have, and what roles you are looking for."
+                "Send your ign, how many people you already have, what roles you are looking for, and other necessary information."
+            )
+        const kuudraInstructions = new EmbedBuilder()
+            .setColor(0x0099FF)
+            .setTitle("Kuudra LFG Instructions")
+            .setDescription(
+                "Send your ign, how many people you already have, and other necessary information."
             )
         const firstResponse = await interaction.reply({embeds: [init], components: [initRow], ephemeral: false})
 
@@ -315,7 +319,7 @@ module.exports = {
 
                                         await thread.send({ embeds: [init, cataInstructions] });
                                         break;
-                                }
+                                    }
                             case 'master':
                                 init
                                     .setTitle('Master Mode Catacombs')
@@ -490,7 +494,7 @@ module.exports = {
                                         await thread.send({ embeds: [init, cataInstructions] });
                                         break;
                                 }
-                            break;
+                            }
                 case 'Kuudra':
                     init
                         .setColor(0x0099FF)
@@ -500,13 +504,125 @@ module.exports = {
                             { name: 'Kuudra Tiers', value: 'What tier of Kuudra are you looking for?'}
                         )
 
-                        const rowKuudra = new ActionRowBuilder()
-                            .setComponents(basic, hot, burning, fiery, infernal)
+                    const rowKuudra = new ActionRowBuilder()
+                        .setComponents(basic, hot, burning, fiery, infernal)
                         
                     await phaseTwo.update({ embeds: [init], components: [rowKuudra], time: 60_000})
 
-                    break;
+                    const kuudraPhaseThree = await firstResponse.awaitMessageComponent({ filter: collectorFilter, time: 60_000 })
 
+                    switch (kuudraPhaseThree.customId) {
+                        case 'basic':
+                            init
+                                .setTitle('Basic Kuudra')
+                                .setImage()
+                                .setThumbnail('https://wiki.hypixel.net/images/f/f0/SkyBlock_items_kuudra_tier_key.png')
+                                .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() })
+                                .setFields()
+                                .addFields(
+                                    { name: 'LFG Leader', value: interaction.user.username, inline: true },
+                                    { name: 'Note', value: note }
+                                )
+                                .setTimestamp()
+                                .setFooter({ text: 'Created by woqh and Unreal5trength. '})
+                                            
+                            await kuudraPhaseThree.update({ embeds: [init], components: []})
+                            thread = await interaction.channel.threads.create({
+                                name: `${interaction.user.username} Basic Kuudra`,
+                                autoArchiveDuration: ThreadAutoArchiveDuration.OneHour
+                            })
+
+                            await thread.send({ embeds: [init, kuudraInstructions] });
+                            break;
+                        case 'hot':
+                            init
+                                .setTitle('Hot Kuudra')
+                                .setImage()
+                                .setThumbnail('https://wiki.hypixel.net/images/7/78/SkyBlock_items_kuudra_hot_tier_key.png')
+                                .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() })
+                                .setFields()
+                                .addFields(
+                                    { name: 'LFG Leader', value: interaction.user.username, inline: true },
+                                    { name: 'Note', value: note }
+                                )
+                                .setTimestamp()
+                                .setFooter({ text: 'Created by woqh and Unreal5trength. '})
+                                            
+                            await kuudraPhaseThree.update({ embeds: [init], components: []})
+                            thread = await interaction.channel.threads.create({
+                                name: `${interaction.user.username} Hot Kuudra`,
+                                autoArchiveDuration: ThreadAutoArchiveDuration.OneHour
+                            })
+
+                            await thread.send({ embeds: [init, kuudraInstructions] });
+                            break;
+                        case 'burning':
+                            init
+                                .setTitle('Burning Kuudra')
+                                .setImage()
+                                .setThumbnail('https://wiki.hypixel.net/images/8/83/SkyBlock_items_kuudra_burning_tier_key.png')
+                                .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() })
+                                .setFields()
+                                .addFields(
+                                    { name: 'LFG Leader', value: interaction.user.username, inline: true },
+                                    { name: 'Note', value: note }
+                                )
+                                .setTimestamp()
+                                .setFooter({ text: 'Created by woqh and Unreal5trength. '})
+                                            
+                            await kuudraPhaseThree.update({ embeds: [init], components: []})
+                            thread = await interaction.channel.threads.create({
+                                name: `${interaction.user.username} Burning Kuudra`,
+                                autoArchiveDuration: ThreadAutoArchiveDuration.OneHour
+                            })
+
+                            await thread.send({ embeds: [init, kuudraInstructions] });
+                            break;
+                        case 'fiery':
+                            init
+                                .setTitle('Fiery Kuudra')
+                                .setImage()
+                                .setThumbnail('https://wiki.hypixel.net/images/5/51/SkyBlock_items_kuudra_fiery_tier_key.png')
+                                .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() })
+                                .setFields()
+                                .addFields(
+                                    { name: 'LFG Leader', value: interaction.user.username, inline: true },
+                                    { name: 'Note', value: note }
+                                )
+                                .setTimestamp()
+                                .setFooter({ text: 'Created by woqh and Unreal5trength. '})
+                                            
+                            await kuudraPhaseThree.update({ embeds: [init], components: []})
+                            thread = await interaction.channel.threads.create({
+                                name: `${interaction.user.username} Fiery Kuudra`,
+                                autoArchiveDuration: ThreadAutoArchiveDuration.OneHour
+                            })
+
+                            await thread.send({ embeds: [init, kuudraInstructions] });
+                            break;
+                        case 'infernal':
+                            init
+                                .setTitle('Infernal Kuudra')
+                                .setImage()
+                                .setThumbnail('https://wiki.hypixel.net/images/3/3e/SkyBlock_items_kuudra_infernal_tier_key.png')
+                                .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() })
+                                .setFields()
+                                .addFields(
+                                    { name: 'LFG Leader', value: interaction.user.username, inline: true },
+                                    { name: 'Note', value: note }
+                                )
+                                .setTimestamp()
+                                .setFooter({ text: 'Created by woqh and Unreal5trength. '})
+                                            
+                            await kuudraPhaseThree.update({ embeds: [init], components: []})
+                            thread = await interaction.channel.threads.create({
+                                name: `${interaction.user.username} Infernal Kuudra`,
+                                autoArchiveDuration: ThreadAutoArchiveDuration.OneHour
+                            })
+
+                            await thread.send({ embeds: [init, kuudraInstructions] });
+                            break;
+                    }
                 case 'Mineshaft':
                     await phaseTwo.update({ content: 'test'})
                     break;
@@ -517,9 +633,9 @@ module.exports = {
                     await phaseTwo.update({ content: 'test'})
                     break;
                 }
-            } 
-        } catch (e) {
-            console.error(e)
-        }
+            } catch (e) {
+                console.error(e)
+            }
+        } 
     } 
-}
+// wtf why so many {}
