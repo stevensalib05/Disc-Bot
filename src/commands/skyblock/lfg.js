@@ -8,7 +8,7 @@ module.exports = {
         .addStringOption((option) => option
             .setName("note")
             .setDescription("Add a custom message to your LFG Embed.")
-            .setRequired(false)),
+            .setRequired(true)),
     async execute(interaction) {
         const note = interaction.options.getString('note');
 
