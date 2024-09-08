@@ -89,6 +89,7 @@ module.exports = {
             if (activePet.includes('_')) {
                 activePet = activePet.replace('_', ' ')
             }
+            let activePetRarity = petObj.rarity;
 
             let hotmLevel = obj.me.hotm.experience.level.toString();
 
@@ -108,7 +109,7 @@ module.exports = {
                 { name: "Current Bank:", value:  playerBank, inline: true },
                 { name: "\t", value: "\t" },
                 { name: "Slayer Levels:", value: playerSlayers, inline: true },
-                { name: "Active Pet:", value: activePet, inline: true },
+                { name: "Active Pet:", value: `${activePetRarity} ${activePet}`, inline: true },
                 { name: "HOTM Level:", value: hotmLevel, inline: true }
 
 
