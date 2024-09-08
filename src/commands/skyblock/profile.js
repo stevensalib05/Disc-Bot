@@ -1,7 +1,9 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder, TimestampStyles } = require("discord.js");
 const hypixel = require('hypixel-api-reborn');
 const { apiKey } = require('../../../config.json');
 const hClient = new hypixel.Client(apiKey);
+const fs = require('fs');
+const { time } = require("console");
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -34,10 +36,10 @@ module.exports = {
             let playerCataDecimal = ((obj.me.dungeons.experience.progress)/100).toString().slice(2,5);
             if(obj.me.dungeons.experience.progress == null) {playerCataDecimal = 0 };
             if(obj.me.dungeons.experience.level >= 55) 
-                {playerCata = `5${((obj.me.dungeons.experience.xp - 569800000)/200000000).toFixed(3)}`} else {
+                {playerCata = `55+`} else {
                     playerCata = `${(Math.ceil((obj.me.dungeons.experience.level) * 100)/100).toString()}.${(playerCataDecimal)}`
                 };
-            let playerSecrets =  `${obj.me.dungeons.secrets} Secrets`;
+            let playerSecrets =  obj.me.dungeons.secrets.toString();
 
             let playerMP = obj.me.highestMagicalPower.toString();
 
@@ -46,16 +48,22 @@ module.exports = {
             if(obj.banking == undefined) {playerBank = 'Bank API Off'} else {playerBank = Math.round(obj.banking.balance).toString();}
 
             switch(playerBank.length) {
-                case (10, 11, 12):
-                    playerBank = `${(playerBank/1000000000)}B`;
+                case 10:
+                case 11:
+                case 12:
+                    playerBank = `${(playerBank/1000000000).toFixed(2)}B`;
                     if(obj.banking == undefined) {playerBank = 'Bank API Off'}
                     break;
-                case (7, 8, 9):
-                    playerBank = `${(playerBank/1000000)}M`;
+                case 7:
+                case 8:
+                case 9:
+                    playerBank = `${(playerBank/1000000).toFixed(2)}M`;
                     if(obj.banking == undefined) {playerBank = 'Bank API Off'}
                     break;
-                case (4, 5, 6):
-                    playerBank = `${(playerBank/1000)}K`;
+                case 4:
+                case 5:
+                case 6:
+                    playerBank = `${(playerBank/1000).toFixed(2)}K`;
                     if(obj.banking == undefined) {playerBank = 'Bank API Off'}
                     break;
             }
@@ -64,24 +72,46 @@ module.exports = {
 
             let playerProfile = obj.me.profileName;
             let playerProfileType;
-            if (obj.me.gameMode == null) { playerProfileType = 'Normal' } else
-            { playerProfileType = obj.me.gameMode.charAt(0).toUpperCase() + obj.me.gameMode.slice(1) };
+            if (obj.me.gameMode == null) { 
+                playerProfileType = 'Normal' 
+            } else { 
+                playerProfileType = obj.me.gameMode.charAt(0).toUpperCase() + obj.me.gameMode.slice(1) 
+            };
+            let timeStamp = obj.me.firstJoinTimestamp.toString();
+            let formattedTimestamp = `<t:${timeStamp.substring(0, timeStamp.length - 3)}>`
 
-            console.log(obj.me.dungeons)
+            // Pet Variables. This required way too damn much filtering and vars oml.
+            let activePetInfo = obj.me.pets.filter(pets => pets.active);
+            let activePetInfoJSON = JSON.stringify(activePetInfo)
+            let activePetInfoJSONFixed = activePetInfoJSON.substring(1, JSON.stringify(activePetInfo).length - 1);
+            let petObj = JSON.parse(activePetInfoJSONFixed)
+            let activePet = petObj.type;
+            if (activePet.includes('_')) {
+                activePet = activePet.replace('_', ' ')
+            }
 
+            let hotmLevel = obj.me.hotm.experience.level.toString();
+
+            console.log(obj.me);
             // Embed being prepared for interaction.
             const embed = new EmbedBuilder()
             .setColor(0x0099FF)
             .setTitle(`${playerName}'s Profile Overview`)
-            .setDescription(`Profile: **${playerProfile}**\nProfile Type: **${playerProfileType}**`)
+            .setDescription(`Profile: **${playerProfile}**\nProfile Type: **${playerProfileType}**\nCreated at: **${formattedTimestamp}**`)
             .addFields(
-                { name: "Level:", value:  playerLevel },
-                { name: "Skill Average:", value:  playerSA },
-                { name: "Dungeon Level:", value:  playerCata },
-                { name: "Total Secrets:", value: playerSecrets },
-                { name: "Magical Power:", value:  playerMP },
-                { name: "Current Bank:", value:  playerBank },
-                { name: "Slayer Levels:", value: playerSlayers }
+                { name: "Level:", value:  playerLevel, inline: true },
+                { name: "Skill Average:", value:  playerSA, inline: true },
+                { name: "Dungeon Level:", value:  playerCata, inline: true },
+                { name: "\t", value: "\t" },
+                { name: "Total Secrets:", value: playerSecrets, inline: true },
+                { name: "Highest MP:", value:  playerMP, inline: true },
+                { name: "Current Bank:", value:  playerBank, inline: true },
+                { name: "\t", value: "\t" },
+                { name: "Slayer Levels:", value: playerSlayers, inline: true },
+                { name: "Active Pet:", value: activePet, inline: true },
+                { name: "HOTM Level:", value: hotmLevel, inline: true }
+
+
             )
             
             await interaction.reply({ embeds: [embed] });
