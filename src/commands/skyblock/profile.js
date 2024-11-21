@@ -104,17 +104,17 @@ module.exports = {
             .setThumbnail(`https://mc-heads.net/body/${playerName}.png`)
             .setDescription(`Profile: **${playerProfile}**\nProfile Type: **${playerProfileType}**\nCreated at: **${formattedTimestamp}**`)
             .addFields(
-                { name: "Level:", value:  playerLevel, inline: true },
-                { name: "Skill Average:", value:  playerSA, inline: true },
-                { name: "Dungeon Level:", value:  playerCata, inline: true },
+                { name: "<:level:1309265251929427988> Level:", value:  playerLevel, inline: true },
+                { name: "<:skills:1309265982170075276> Skill Average:", value:  playerSA, inline: true },
+                { name: "<:dungeons:1309266753292996608> Dungeon Level:", value:  playerCata, inline: true },
                 { name: "\t", value: "\t" },
-                { name: "Total Secrets:", value: playerSecrets, inline: true },
-                { name: "Highest MP:", value:  playerMP, inline: true },
-                { name: "Current Bank:", value:  playerBank, inline: true },
+                { name: "<:secrets:1309268284331266138> Total Secrets:", value: playerSecrets, inline: true },
+                { name: "<:accessories:1309267097360273419> Highest MP:", value:  playerMP, inline: true },
+                { name: "<:banking:1309267347818807389> Current Bank:", value:  playerBank, inline: true },
                 { name: "\t", value: "\t" },
-                { name: "Slayer Levels:", value: playerSlayers, inline: true },
-                { name: "Active Pet:", value: `${activePetRarity} ${activePet}`, inline: true },
-                { name: "HOTM Level:", value: hotmLevel, inline: true }
+                { name: "<:slayers:1309267610898141285> Slayer Levels:", value: playerSlayers, inline: true },
+                { name: "<:pets:1309267789290143765> Active Pet:", value: `${activePetRarity} ${activePet}`, inline: true },
+                { name: "<:hotm:1309268002792935525> HOTM Level:", value: hotmLevel, inline: true }
 
 
             )
