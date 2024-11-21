@@ -94,10 +94,14 @@ module.exports = {
             let hotmLevel = obj.me.hotm.experience.level.toString();
 
             console.log(obj.me);
-            // Embed being prepared for interaction.
+
+            // Fetching Player Head for embed Thumbnail
+
+            // Building Message Embed
             const embed = new EmbedBuilder()
             .setColor(0x0099FF)
             .setTitle(`${playerName}'s Profile Overview`)
+            .setThumbnail(`https://mc-heads.net/body/${playerName}.png`)
             .setDescription(`Profile: **${playerProfile}**\nProfile Type: **${playerProfileType}**\nCreated at: **${formattedTimestamp}**`)
             .addFields(
                 { name: "Level:", value:  playerLevel, inline: true },
