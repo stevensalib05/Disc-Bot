@@ -36,7 +36,7 @@ module.exports = {
                 }
             ]})
         } else if (!username) {
-            await interaction.channel.bulkDelete(numMessages);
+            await interaction.channel.bulkDelete(numMessages, true);
             await interaction.reply({content: `Deleted ${numMessages} messages.`, ephemeral: true});
             interaction.guild.channels.cache.find(channel => channel.name === 'logs')
             .send(`${interaction.user.username} deleted ${numMessages} messages from ${interaction.channel}!`)   

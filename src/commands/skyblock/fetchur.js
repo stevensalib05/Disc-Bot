@@ -7,9 +7,9 @@ module.exports = {
     .setDescription(`Retrieves Fetchur's Daily Item.`),
     async execute(interaction) {
         const fetchur = await cheerio.fromURL('https://hypixel-skyblock.fandom.com/wiki/Fetchur');
-        const itemAmount = fetchur('body > div:eq(3) > div:eq(3) > div:eq(2) > main > div:eq(2) > div:eq(1) > div > div > div:eq(1) > div > div > span:eq(0)').contents().toString();
-        const item = fetchur('body > div:eq(3) > div:eq(3) > div:eq(2) > main > div:eq(2) > div:eq(1) > div > div > div:eq(1) > div > div > a:eq(1)').contents().toString();
-        const itemPNG = fetchur('body > div:eq(3) > div:eq(3) > div:eq(2) > main > div:eq(2) > div:eq(1) > div > div > div:eq(1) > div > div > a:eq(0)').find('img').attr('data-src');
+        const itemAmount = fetchur('body > div:eq(5) > div:eq(3) > div:eq(2) > main > div:eq(2) > div:eq(1) > div > div > div:eq(1) > div > div > span:eq(0)').contents().toString();
+        const item = fetchur('body > div:eq(5) > div:eq(3) > div:eq(2) > main > div:eq(2) > div:eq(1) > div > div > div:eq(1) > div > div > a:eq(1)').contents().toString();
+        const itemPNG = fetchur('body > div:eq(5) > div:eq(3) > div:eq(2) > main > div:eq(2) > div:eq(1) > div > div > div:eq(1) > div > div > a:eq(0)').find('img').attr('data-src');
         const dayNumber = new Date().getDay();
         let dayText = '';
         switch(dayNumber) {
