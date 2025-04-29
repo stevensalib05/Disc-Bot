@@ -42,7 +42,9 @@ module.exports = {
             { name: 'Item Wanted:', value: item },
             { name: 'Amount:', value: itemAmount }
         )
-        .setThumbnail(itemPNG);
+        .setThumbnail(itemPNG)
+        .setTimestamp()
+        .setFooter({ text: 'Created by woqh and Unreal5trength. '});
         interaction.reply({ embeds : [embed] });
 
 

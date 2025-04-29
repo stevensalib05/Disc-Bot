@@ -118,6 +118,8 @@ module.exports = {
 
 
             )
+            .setTimestamp()
+            .setFooter({ text: 'Created by woqh and Unreal5trength. '})
             
             await interaction.reply({ embeds: [embed] });
         }

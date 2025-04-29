@@ -27,13 +27,24 @@ const rest = new REST().setToken(token);
 deploy();
 
 async function deploy() {
+    /*
+        for (const ID of guildID) {
+            await rest.put(
+            Routes.applicationGuildCommands(clientID, ID),
+            { body : [] },
+        );
+    }
+
+    The above is used when commands bug out and either duplicate in the list or dont appear at all. It refreshes the entire list by removing all and then modify it back to the way it was.
+    */
     try {
         console.log(`Started refreshing ${commands.length} application (/) commands.`);
-
-        const data = await rest.put(
-            Routes.applicationGuildCommands(clientID, guildID),
+        for (const ID of guildID) {
+            await rest.put(
+            Routes.applicationGuildCommands(clientID, ID),
             { body : commands },
         );
+    }
 
         console.log(`Successfully reloaded ${commands.length} application (/) commands.`);
     } catch (error) {

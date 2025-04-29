@@ -13,6 +13,8 @@ module.exports = {
         const embed = new EmbedBuilder()
             .setColor(0x0099FF)
             .setImage(username.avatarURL())
+            .setTimestamp()
+            .setFooter({ text: 'Created by woqh and Unreal5trength. '})
         await interaction.reply({ embeds : [embed] });
     }
 }
