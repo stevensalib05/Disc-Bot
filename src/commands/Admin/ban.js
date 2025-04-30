@@ -18,7 +18,7 @@ module.exports = {
             const username = interaction.options.getMember('username');
             const reasoning = interaction.options.getString('reasoning');
 
-            if(!interaction.guild.channels.cache.find(channel => channel.name === 'logs')) {
+            if(!interaction.guild.channels.cache.find(channel => channel.name === 'logs') || !interaction.guild.channels.cache.find(channel => channel.name === 'server-logs')) {
                 interaction.guild.channels.create({name: 'logs', permissionOverwrites: [
                     {
                         id: interaction.guild.id,

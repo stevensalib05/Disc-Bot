@@ -1,9 +1,11 @@
 const { SlashCommandBuilder, EmbedBuilder, TimestampStyles } = require("discord.js");
+const { ProfitNetworthCalculator } = require('skyhelper-networth');
 const hypixel = require('hypixel-api-reborn');
 const { apiKey } = require('../../../config.json');
 const hClient = new hypixel.Client(apiKey);
 const fs = require('fs');
-const { time } = require("console");
+const { time, profile } = require("console");
+const { ProfileNetworthCalculator } = require("skyhelper-networth");
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -26,6 +28,52 @@ module.exports = {
             const fixedProfileJSON = filteredProfile.substring(1, filteredProfile.length -1);
 
             let obj = JSON.parse(fixedProfileJSON);
+
+            const uuid = obj.me.uuid;
+            const profileRes = await fetch(`https://api.hypixel.net/v2/skyblock/profiles?uuid=${uuid}&key=${apiKey}`);
+            const profileJSON = await profileRes.json();
+            const selectedProfile = profileJSON.profiles.find(profile => profile.selected)
+
+            if (!selectedProfile) {
+                interaction.reply("No profile found for the given user.")
+            }
+
+            const profileData = selectedProfile.members[uuid];
+            const bankData = selectedProfile.banking?.balance || 0;
+
+            const museumRes = await fetch(`https://api.hypixel.net/v2/skyblock/museum?uuid=${uuid}&key=${apiKey}`);
+            const museumJson = await museumRes.json();
+            const museumData = museumJson.members?.[uuid] || {};
+
+            const networthData = new ProfileNetworthCalculator(profileData, museumData, bankData);
+            const nw = await networthData.getNetworth();
+            let networthJSON = JSON.stringify(nw.networth.toFixed(2)).replaceAll('"', "");
+            console.log("Networth: " + networthJSON);
+            console.log();
+            let nwValue;
+
+            switch(networthJSON.length) {
+                case 15:
+                case 16:
+                case 17:
+                    nwValue = `${(networthJSON/1000000000000).toFixed(2)}T`;
+                    break;
+                case 12:
+                case 13:
+                case 14:
+                    nwValue = `${(networthJSON/1000000000).toFixed(2)}B`;
+                    break;
+                case 9:
+                case 10:
+                case 11:
+                    nwValue = `${(networthJSON/1000000).toFixed(2)}M`;
+                    break;
+                case 6:
+                case 7:
+                case 8:
+                    nwValue = `${(networthJSON/1000).toFixed(2)}K`;
+                    break;
+            }
 
             // All variables that will be used inside the embed later on.
             let playerLevel = obj.me.level.toString();
@@ -93,8 +141,6 @@ module.exports = {
 
             let hotmLevel = obj.me.hotm.experience.level.toString();
 
-            console.log(obj.me);
-
             // Fetching Player Head for embed Thumbnail
 
             // Building Message Embed
@@ -102,7 +148,7 @@ module.exports = {
             .setColor(0x0099FF)
             .setTitle(`${playerName}'s Profile Overview`)
             .setThumbnail(`https://mc-heads.net/body/${playerName}.png`)
-            .setDescription(`Profile: **${playerProfile}**\nProfile Type: **${playerProfileType}**\nCreated at: **${formattedTimestamp}**`)
+            .setDescription(`Profile: **${playerProfile}**\nProfile Type: **${playerProfileType}**\nCreated at: **${formattedTimestamp}**\nNetworth: **${nwValue}**`)
             .addFields(
                 { name: "<:level:1309265251929427988> Level:", value:  playerLevel, inline: true },
                 { name: "<:skills:1309265982170075276> Skill Average:", value:  playerSA, inline: true },

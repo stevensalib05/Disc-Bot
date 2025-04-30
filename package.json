@@ -4,7 +4,8 @@
     "discord.js": "^14.19.2",
     "dotenv": "^16.4.5",
     "fs": "^0.0.1-security",
-    "hypixel-api-reborn": "^11.3.7"
+    "hypixel-api-reborn": "^11.3.7",
+    "skyhelper-networth": "^2.2.0"
   },
   "name": "disc-bot",
   "version": "1.0.0",
